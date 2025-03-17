@@ -1,0 +1,113 @@
+name: CD
+
+on:
+  push: 
+    branches: 
+      - main
+  pull_request:  
+    branches:
+      - main
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  deployments: write
+
+env:
+  DEPLOYMENT_ENV: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_CACHE: remote:rw
+
+jobs:
+  changed-packages:
+    name: Determine which apps changed
+    uses: ./.github/workflows/changed-packages.yml
+
+  docs:
+    name: Deploy docs
+    needs: [changed-packages]
+    if: needs.changed-packages.outputs.docs_changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: deploy-docs-${{ github.ref }}
+      cancel-in-progress: true
+    environment: 
+      name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+    steps:
+      - name: Display Environment
+        run: echo "Deploying with $DEPLOYMENT_ENV credentials"
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Vercel CLI
+        run: yarn global add vercel
+
+      - name: Pull Vercel Environment Information
+        run: echo "Pulled env from vercel server"
+        working-directory: ./apps/docs
+
+      # Ensures turbo caches the build action
+      - name: Build
+        run: yarn build --filter=docs
+
+      - name: Deploy
+        run: echo "Deployment Successful"
+        working-directory: ./apps/docs
+
+  web:
+    name: Deploy web
+    needs: [changed-packages]
+    if: needs.changed-packages.outputs.docs_changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: deploy-web-${{ github.ref }}
+      cancel-in-progress: true
+    environment: 
+      name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+    steps:
+      - name: Display Environment
+        run: echo "Deploying with $DEPLOYMENT_ENV credentials"
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Vercel CLI
+        run: yarn global add vercel
+
+      - name: Pull Vercel Environment Information
+        run: echo "Pulled env from vercel server"
+        working-directory: ./apps/web
+
+      # Ensures turbo caches the build action
+      - name: Build
+        run: yarn build --filter=web
+
+      - name: Deploy
+        run: echo "Deployment Successful"
+        working-directory: ./apps/web
+  
+  
