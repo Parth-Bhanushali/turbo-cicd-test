@@ -72,7 +72,7 @@ jobs:
   web:
     name: Deploy web
     needs: [changed-packages]
-    if: needs.changed-packages.outputs.docs_changed == 'true'
+    if: needs.changed-packages.outputs.web_changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     concurrency:
