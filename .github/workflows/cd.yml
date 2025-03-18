@@ -46,14 +46,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-          cache: 'yarn'
-          cache-dependency-path: '**/yarn.lock'
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Install Vercel CLI
-        run: yarn global add vercel
+        run: pnpm add -g vercel
 
       - name: Pull Vercel Environment Information
         run: echo "Pulled env from vercel server"
@@ -61,7 +61,7 @@ jobs:
 
       # Ensures turbo caches the build action
       - name: Build
-        run: yarn build --filter=docs
+        run: pnpm build --filter=docs
 
       - name: Deploy
         run: echo "Deployment Successful"
@@ -89,14 +89,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-          cache: 'yarn'
-          cache-dependency-path: '**/yarn.lock'
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Install Vercel CLI
-        run: yarn global add vercel
+        run: pnpm add -g vercel
 
       - name: Pull Vercel Environment Information
         run: echo "Pulled env from vercel server"
@@ -104,7 +104,7 @@ jobs:
 
       # Ensures turbo caches the build action
       - name: Build
-        run: yarn build --filter=web
+        run: pnpm build --filter=web
 
       - name: Deploy
         run: echo "Deployment Successful"
