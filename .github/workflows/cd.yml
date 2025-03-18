@@ -44,10 +44,6 @@ jobs:
 
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-          cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
@@ -87,10 +83,6 @@ jobs:
 
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-          cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
