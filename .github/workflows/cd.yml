@@ -68,10 +68,9 @@ jobs:
       - name: Deploy
         id: deploy-docs
         run: |
-          echo "Deployment Successful"
           DEPLOY_URL=https://docs-1234567891234567-preview.vercel.app
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_ENV
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "Deployment Successful"
         working-directory: ./apps/docs
     outputs:
       deploy_url: ${{ steps.deploy-docs.outputs.deploy_url }}
@@ -118,7 +117,10 @@ jobs:
         run: pnpm build --filter=web
 
       - name: Deploy
-        run: echo "Deployment Successful"
+        run: |
+          DEPLOY_URL=https://web-1234567891234567-preview.vercel.app
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "Deployment Successful"
         working-directory: ./apps/web
   
   
