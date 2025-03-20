@@ -69,7 +69,7 @@ jobs:
         id: deploy-docs
         run: |
           echo "Deployment Successful"
-          DEPLOY_URL=https://google.com
+          DEPLOY_URL=https://docs-1234567891234567-preview.vercel.app
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_ENV
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
         working-directory: ./apps/docs
