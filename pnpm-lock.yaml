@@ -32,9 +32,6 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
-      styled-jsx:
-        specifier: ^5.1.2
-        version: 5.1.6(react@19.0.0)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -57,9 +54,6 @@ importers:
       typescript:
         specifier: 5.8.2
         version: 5.8.2
-      vercel:
-        specifier: 33.2.0
-        version: 33.2.0
 
   apps/web:
     dependencies:

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 3001",
-    "build": "vercel build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit"
@@ -14,8 +14,7 @@
     "@repo/ui": "workspace:*",
     "next": "^15.2.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "styled-jsx": "^5.1.2"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
@@ -24,10 +23,6 @@
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "eslint": "^9.22.0",
-    "typescript": "5.8.2",
-    "vercel": "33.2.0"
-  },
-  "engines": {
-    "node": "20.x"
+    "typescript": "5.8.2"
   }
 }
