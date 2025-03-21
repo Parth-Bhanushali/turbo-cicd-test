@@ -118,7 +118,7 @@ jobs:
 
       - name: Deploy
         run: |
-          DEPLOY_URL=$(vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN)
+          echo "DEPLOY_URL=$(vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN)"
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
           echo "Deployment Successful"
         working-directory: ./apps/web
