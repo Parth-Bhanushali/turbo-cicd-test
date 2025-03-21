@@ -117,11 +117,10 @@ jobs:
         run: pnpm build --filter=web
 
       - name: Deploy
-        run: vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN
-        # run: |
-        #   DEPLOY_URL=https://web-1234567891234567-preview.vercel.app
-        #   echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
-        #   echo "Deployment Successful"
+        run: |
+          DEPLOY_URL=$(vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN)
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "Deployment Successful"
         working-directory: ./apps/web
   
   
