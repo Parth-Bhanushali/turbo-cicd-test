@@ -109,7 +109,7 @@ jobs:
         run: pnpm add -g vercel
 
       - name: Pull Vercel Environment Information
-        run: echo "Pulled env from vercel server"
+        run: vercel pull -y --environment=$DEPLOYMENT_ENV --token $TURBO_TOKEN
         working-directory: ./apps/web
 
       # Ensures turbo caches the build action
@@ -117,10 +117,11 @@ jobs:
         run: pnpm build --filter=web
 
       - name: Deploy
-        run: |
-          DEPLOY_URL=https://web-1234567891234567-preview.vercel.app
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
-          echo "Deployment Successful"
+        run: vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN
+        # run: |
+        #   DEPLOY_URL=https://web-1234567891234567-preview.vercel.app
+        #   echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+        #   echo "Deployment Successful"
         working-directory: ./apps/web
   
   
