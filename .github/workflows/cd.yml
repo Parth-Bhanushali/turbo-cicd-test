@@ -68,7 +68,7 @@ jobs:
       - name: Deploy
         id: deploy-docs
         run: |
-          echo "deploy_url=https://docs-1234567891234567-preview.vercel.app"
+          echo deploy_url=https://docs-1234567891234567-preview.vercel.app
           echo "Deployment Successful"
         working-directory: ./apps/docs
 
