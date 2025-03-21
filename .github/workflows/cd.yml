@@ -68,8 +68,7 @@ jobs:
       - name: Deploy
         id: deploy-docs
         run: |
-          DEPLOY_URL=https://docs-1234567891234567-preview.vercel.app
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "deploy_url=https://docs-1234567891234567-preview.vercel.app" >> $GITHUB_OUTPUT
           echo "Deployment Successful"
         working-directory: ./apps/docs
     outputs:
@@ -118,8 +117,7 @@ jobs:
 
       - name: Deploy
         run: |
-          echo "DEPLOY_URL=$(vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN)"
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "deploy_url=$(vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN)" >> $GITHUB_OUTPUT
           echo "Deployment Successful"
         working-directory: ./apps/web
   
