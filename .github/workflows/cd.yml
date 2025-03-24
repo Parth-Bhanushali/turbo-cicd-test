@@ -33,9 +33,6 @@ jobs:
     concurrency:
       group: deploy-mobile-${{ github.ref }}
       cancel-in-progress: true
-    defaults:
-      run:
-        working-directory: ./apps/mobile
     environment: 
       name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
     steps:
@@ -68,6 +65,7 @@ jobs:
         uses: expo/expo-github-action/continuous-deploy-fingerprint-info@main
         with: 
           profile: ${{ env.DEPLOYMENT_ENV }}
+          working-directory: ./apps/mobile
 
       - name: Log Fingerprints Info
         run: |
@@ -79,7 +77,6 @@ jobs:
       # Ensures turbo caches the build action
       - name: Build
         run: pnpm build --filter=mobile
-        working-directory: .
 
       - name: Send OTA Updates
         id: ota-updates
@@ -93,6 +90,7 @@ jobs:
           else 
             echo "Builds incompatible for releasing any OTA Updates"
           fi
+        working-directory: ./apps/mobile
 
       - name: Generate Android Build & Submit to Play Store
         if: steps.fingerprints-info.outputs.android-build-id == ''
@@ -102,6 +100,7 @@ jobs:
           echo "Generated and deployed the android build"
           echo android_deploy_url=https://expo.dev/accounts/parth_ayurheals/projects/mobile/builds/b99b23ac-31a4-4fcd-935c-838525beaf2a
         continue-on-error: true
+        working-directory: ./apps/mobile
         
       - name: Generate iOS Build & Submit to App Store
         if: steps.fingerprints-info.outputs.ios-build-id == ''
@@ -110,6 +109,7 @@ jobs:
           eas build -p ios -e ${{ env.DEPLOYMENT_ENV }} --local --non-interactive --json
           echo "Generated and deployed the ios build"
           echo ios_deploy_url=https://expo.dev/accounts/parth_ayurheals/projects/mobile/builds/b99b23ac-31a4-4fcd-935c-838525beaf2a
+        working-directory: ./apps/mobile
 
   docs:
     name: Deploy docs
