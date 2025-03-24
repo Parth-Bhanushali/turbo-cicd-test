@@ -57,15 +57,15 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Get fingerprint info
         id: fingerprints-info
         uses: expo/expo-github-action/continuous-deploy-fingerprint-info@main
         with: 
           profile: ${{ env.DEPLOYMENT_ENV }}
           working-directory: ./apps/mobile
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
 
       # Ensures turbo caches the build action
       - name: Build
