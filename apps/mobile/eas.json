@@ -1,0 +1,32 @@
+{
+  "cli": {
+    "version": ">= 7.6.2",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "base": {
+      "autoIncrement": true,
+      "credentialsSource": "remote",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "preview": {
+      "extends": "base",
+      "environment": "preview",
+      "env": {
+        "ENVIRONMENT": "preview"
+      },
+      "channel": "preview"
+    },
+    "production": {
+      "extends": "base",
+      "environment": "production",
+      "env": {
+        "ENVIRONMENT": "production"
+      },
+      "channel": "production"
+    }
+  }
+}
