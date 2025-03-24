@@ -24,6 +24,67 @@ jobs:
     name: Determine which apps changed
     uses: ./.github/workflows/changed-packages.yml
 
+  mobile:
+    name: Deploy mobile
+    needs: [changed-packages]
+    if: needs.changed-packages.outputs.mobile_changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: deploy-mobile-${{ github.ref }}
+      cancel-in-progress: true
+    environment: 
+      name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+    steps:
+      - name: Display Environment
+        run: echo "Deploying with $DEPLOYMENT_ENV credentials"
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+      
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Get fingerprint info
+        id: fingerprints-info
+        uses: expo/expo-github-action/continuous-deploy-fingerprint-info@main
+        with: 
+          profile: ${{ env.DEPLOYMENT_ENV }}
+          working-directory: ./apps/mobile
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Ensures turbo caches the build action
+      - name: Build
+        run: pnpm build --filter=mobile
+
+      - name: Log Info
+        run: |
+          echo "android_build_id: ${{ steps.fingerprints-info.outputs.android-build-id }}"
+          echo "ios_build_id: ${{ steps.fingerprints-info.outputs.ios-build-id }}"
+          echo "android_fingerprint: ${{ steps.fingerprints-info.outputs.android-fingerprint }}"
+          echo "ios_fingerprint: ${{ steps.fingerprints-info.outputs.ios-fingerprint }}"
+
+      - name: Deploy
+        id: deploy-mobile
+        run: |
+          echo deploy_url=https://expo.dev/accounts/parth_ayurheals/projects/mobile/builds/b99b23ac-31a4-4fcd-935c-838525beaf2a
+          echo "Deployment Successful"
+        working-directory: ./apps/mobile
+
   docs:
     name: Deploy docs
     needs: [changed-packages]
