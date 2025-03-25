@@ -96,13 +96,14 @@ jobs:
         if: steps.fingerprints-info.outputs.android-build-id == ''
         id: android-build-and-deploy
         run: |
-          eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --local --output dist/release.aab --non-interactive --json
-          eas submit -p android -e ${{ env.DEPLOYMENT_ENV }} --path dist/release.aab --non-interactive
+          eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json
           echo "Generated and deployed the android build"
           echo android_deploy_url=https://expo.dev/accounts/parth_ayurheals/projects/mobile/builds/b99b23ac-31a4-4fcd-935c-838525beaf2a
         continue-on-error: true
         working-directory: ./apps/mobile
-        
+        # eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --local --output dist/release.aab --non-interactive --json
+        # eas submit -p android -e ${{ env.DEPLOYMENT_ENV }} --path dist/release.aab --non-interactive
+
       # - name: Generate iOS Build & Submit to App Store
       #   if: steps.fingerprints-info.outputs.ios-build-id == ''
       #   id: ios-build-and-deploy
