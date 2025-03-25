@@ -7,9 +7,9 @@
     "base": {
       "autoIncrement": true,
       "credentialsSource": "remote",
-      "distribution": "internal",
+      "distribution": "store",
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       }
     },
     "preview": {
@@ -27,6 +27,20 @@
         "ENVIRONMENT": "production"
       },
       "channel": "production"
+    }
+  },
+  "submit": {
+    "preview": {
+      "android": {
+        "track": "internal",
+        "changesNotSentForReview": true,
+        "releaseStatus": "draft"
+      }
+    },
+    "production": {
+      "android": {
+        "track": "production"
+      }
     }
   }
 }
