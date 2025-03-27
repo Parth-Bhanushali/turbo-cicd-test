@@ -111,8 +111,8 @@ jobs:
 
       - name: Print the deploy urls
         run: |
-          echo "deploy_url=${{ env.ANDROID_DEPLOY_URL }}"
-          echo "deploy_url=${{ env.IOS_DEPLOY_URL }}"
+          deploy_url=${{ env.ANDROID_DEPLOY_URL }}
+          deploy_url=${{ env.IOS_DEPLOY_URL }}
 
   docs:
     name: Deploy docs
