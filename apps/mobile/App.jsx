@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
-// console.log('mobile 1234567')
+// console.log('mobile 123456')
 
 export default function App() {
   return (
