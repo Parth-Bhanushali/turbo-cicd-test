@@ -83,12 +83,11 @@ jobs:
         run: |
           if [[ -n "${{ steps.fingerprints-info.outputs.android-build-id }}" ]]; then
             echo "Published OTA Update for Android"
-            echo android_deploy_url=https://expo.dev/accounts/parth_ayurheals/projects/mobile/builds/b99b23ac-31a4-4fcd-935c-838525beaf2a
-          elif [[ -n "${{ steps.fingerprints-info.outputs.ios-build-id }}" ]]; then
+            echo deploy_url=https://www.google.com/imghp
+          fi
+          if [[ -n "${{ steps.fingerprints-info.outputs.ios-build-id }}" ]]; then
             echo "Published OTA Update for iOS"
-            echo ios_deploy_url=https://expo.dev/accounts/parth_ayurheals/projects/mobile/builds/b99b23ac-31a4-4fcd-935c-838525beaf2a
-          else 
-            echo "Builds incompatible for releasing any OTA Updates"
+            echo deploy_url=https://www.youtube.com/podcasts
           fi
         working-directory: ./apps/mobile
 
@@ -96,22 +95,19 @@ jobs:
         if: steps.fingerprints-info.outputs.android-build-id == ''
         id: android-build-and-deploy
         run: |
-          eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json
           echo "Generated and deployed the android build"
-          echo android_deploy_url=https://expo.dev/accounts/parth_ayurheals/projects/mobile/builds/b99b23ac-31a4-4fcd-935c-838525beaf2a
-        continue-on-error: true
+          echo deploy_url=https://www.google.com/imghp
         working-directory: ./apps/mobile
-        # eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --local --output dist/release.aab --non-interactive --json
-        # eas submit -p android -e ${{ env.DEPLOYMENT_ENV }} --path dist/release.aab --non-interactive
+        # eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json
 
-      # - name: Generate iOS Build & Submit to App Store
-      #   if: steps.fingerprints-info.outputs.ios-build-id == ''
-      #   id: ios-build-and-deploy
-      #   run: |
-      #     eas build -p ios -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json
-      #     echo "Generated and deployed the ios build"
-      #     echo ios_deploy_url=https://expo.dev/accounts/parth_ayurheals/projects/mobile/builds/b99b23ac-31a4-4fcd-935c-838525beaf2a
-      #   working-directory: ./apps/mobile
+      - name: Generate iOS Build & Submit to App Store
+        if: steps.fingerprints-info.outputs.ios-build-id == ''
+        id: ios-build-and-deploy
+        run: |
+          echo "Generated and deployed the ios build"
+          echo deploy_url=https://www.youtube.com/podcasts
+        working-directory: ./apps/mobile
+        # eas build -p ios -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json
 
   docs:
     name: Deploy docs
