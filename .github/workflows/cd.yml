@@ -83,11 +83,11 @@ jobs:
         run: |
           if [[ -n "${{ steps.fingerprints-info.outputs.android-build-id }}" ]]; then
             echo "Published OTA Update for Android"
-            echo deploy_url=https://www.google.com/imghp
+            echo ANDROID_DEPLOY_URL=https://www.google.com/imghp >> $GITHUB_ENV
           fi
           if [[ -n "${{ steps.fingerprints-info.outputs.ios-build-id }}" ]]; then
             echo "Published OTA Update for iOS"
-            echo deploy_url=https://www.youtube.com/podcasts
+            echo IOS_DEPLOY_URL=https://www.youtube.com/podcasts >> $GITHUB_ENV
           fi
         working-directory: ./apps/mobile
 
@@ -96,7 +96,7 @@ jobs:
         id: android-build-and-deploy
         run: |
           echo "Generated and deployed the android build"
-          echo deploy_url=https://www.google.com/imghp
+          echo ANDROID_DEPLOY_URL=https://www.google.com/imghp >> $GITHUB_ENV
         working-directory: ./apps/mobile
         # eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json
 
@@ -105,9 +105,14 @@ jobs:
         id: ios-build-and-deploy
         run: |
           echo "Generated and deployed the ios build"
-          echo deploy_url=https://www.youtube.com/podcasts
+          echo IOS_DEPLOY_URL=https://www.youtube.com/podcasts >> $GITHUB_ENV
         working-directory: ./apps/mobile
         # eas build -p ios -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json
+
+      - name: Print the deploy urls
+        run: |
+          echo "deploy_url=${{ env.ANDROID_DEPLOY_URL }}"
+          echo "deploy_url=${{ env.IOS_DEPLOY_URL }}"
 
   docs:
     name: Deploy docs
