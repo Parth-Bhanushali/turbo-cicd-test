@@ -31,7 +31,9 @@ jobs:
 
   docs:
     name: Deploy docs
-    needs: [changed-packages, ci]
+    needs: 
+      - changed-packages
+      - ci
     if: needs.changed-packages.outputs.docs_changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
