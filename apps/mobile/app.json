@@ -34,9 +34,7 @@
       "policy": "fingerprint"
     },
     "owner": "parth_ayurheals",
-    "plugins": [
-      "expo-asset"
-    ],
+    "plugins": ["expo-asset"],
     "updates": {
       "url": "https://u.expo.dev/e4b5fedb-0de1-4016-a940-6713573605a0"
     }
