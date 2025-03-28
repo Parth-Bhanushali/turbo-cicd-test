@@ -1,0 +1,84 @@
+name: 🚀 CI
+
+on: 
+  workflow_call: # Allow this workflow to be called from other workflows
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_CACHE: remote:rw
+
+jobs:
+  lint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: ci-lint-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Check Linting
+        run: yarn lint:check
+
+  format:
+    name: Prettier
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency: 
+      group: ci-format-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Check Formatting
+        run: yarn format:check
+
+  typecheck:
+    name: Typescript
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency: 
+      group: ci-typecheck-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Check Types
+        run: yarn typecheck
+
+
