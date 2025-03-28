@@ -28,6 +28,9 @@
     "@types/react-dom": "19.0.4",
     "eslint": "^9.22.0",
     "typescript": "5.8.2",
-    "vercel": "41.4.1"
+    "vercel": "33.2.0"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
