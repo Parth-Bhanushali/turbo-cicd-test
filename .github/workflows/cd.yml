@@ -27,7 +27,7 @@ jobs:
   ci:
     name: CI Checks
     uses: ./.github/workflows/ci.yml
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'pull_request' }}
 
   docs:
     name: Deploy docs
