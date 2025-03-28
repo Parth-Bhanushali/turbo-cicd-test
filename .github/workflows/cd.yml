@@ -34,7 +34,9 @@ jobs:
     needs: 
       - changed-packages
       - ci
-    if: needs.changed-packages.outputs.docs_changed == 'true'
+    if: |
+      always() && !failure() && !cancelled() &&
+      needs.changed-packages.outputs.docs_changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     concurrency:
