@@ -27,7 +27,7 @@ jobs:
   ci:
     name: CI Checks
     uses: ./.github/workflows/ci.yml
-    secrets: inherit
+    secrets: inherit  # Pass the secrets to ci workflow
     if: ${{ github.event_name == 'pull_request' }}
 
   mobile:
