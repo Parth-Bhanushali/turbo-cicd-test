@@ -2,7 +2,7 @@ import Image, { type ImageProps } from 'next/image';
 import { Button } from '@repo/ui/button';
 import styles from './page.module.css';
 
-console.log('Docs 5');
+console.log('Docs 4');
 
 type Props = Omit<ImageProps, 'src'> & {
   srcLight: string;
@@ -14,8 +14,8 @@ const ThemeImage = (props: Props) => {
 
   return (
     <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
+      <Image {...rest} src={srcLight} className={1} />
+      <Image {...rest} src={srcDark} className={2} />
     </>
   );
 };
