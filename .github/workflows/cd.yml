@@ -29,6 +29,11 @@ jobs:
         with:
           submodules: true  # Ensure submodules are checked out if apps/packages are submodules
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true  # Ensure submodules are checked out if apps/packages are submodules
+
       - name: Generate GitHub Release for Each Package/App
         if: success()
         run: |
@@ -42,23 +47,27 @@ jobs:
               if [ -f "$dir/CHANGELOG.md" ]; then
                 echo "Found CHANGELOG.md in $dir"
                 
-                # Get the version from the package.json in that directory
-                VERSION=$(node -p "require('$dir/package.json').version")
-                PACKAGE_NAME=$(basename $dir)
-                CHANGELOG=$(cat $dir/CHANGELOG.md)
-
-                echo "Creating release for $PACKAGE_NAME with version $VERSION"
-                echo "Release created for $PACKAGE_NAME"
+                # Check if package.json exists in the directory
+                if [ -f "$dir/package.json" ]; then
+                  # Get the version from the package.json in that directory
+                  VERSION=$(node -p "require('$dir/package.json').version")
+                  PACKAGE_NAME=$(basename $dir)
+                  CHANGELOG=$(cat $dir/CHANGELOG.md)
+  
+                  echo "Creating release for $PACKAGE_NAME with version $VERSION"
+                  echo "Release created for $PACKAGE_NAME"
+                else
+                  echo "No package.json found in $dir, skipping release creation."
+                fi
               else
                 echo "No CHANGELOG.md found in $dir"
               fi
             fi
           done
-
+          
           echo "Release creation process completed."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   # changed-packages:
   #   name: Determine which apps changed
   #   uses: ./.github/workflows/changed-packages.yml
