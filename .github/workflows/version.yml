@@ -1,0 +1,14 @@
+name: Version Bumps
+
+on: workflow_dispatch
+
+permissions: 
+  contents: write
+  
+jobs:
+  create-releases:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create a new release
+        run: gh --version
