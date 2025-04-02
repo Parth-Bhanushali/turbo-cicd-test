@@ -49,10 +49,10 @@ jobs:
 
           for dir in apps/* packages/*; do
             if [ -f "$dir/CHANGELOG.md" ]; then
-              # VERSION=$(node -p "require('./$dir/package.json').version")
+              VERSION=$(node -p "require('./$dir/package.json').version")
               PACKAGE_NAME=$(basename $dir)
               CHANGELOG=$(cat $dir/CHANGELOG.md)
-              echo "Creating release for $PACKAGE_NAME and path is $dir"
+              echo "Creating release for $PACKAGE_NAME and path is $dir and version is $VERSION"
               # gh release create v$VERSION --title "Release $VERSION for $PACKAGE_NAME" --notes "$CHANGELOG" --target main
             fi
           done
