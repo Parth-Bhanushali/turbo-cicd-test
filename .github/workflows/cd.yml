@@ -20,207 +20,214 @@ env:
   TURBO_CACHE: remote:rw
 
 jobs:
-  changed-packages:
-    name: Determine which apps changed
-    uses: ./.github/workflows/changed-packages.yml
-
-  ci:
-    name: CI Checks
-    uses: ./.github/workflows/ci.yml
-    secrets: inherit  # Pass the secrets to ci workflow
-    if: ${{ github.event_name == 'pull_request' }}
-
-  mobile:
-    name: Deploy mobile
-    needs: [changed-packages, ci]
-    if: |
-      always() && !failure() && !cancelled() &&
-      needs.changed-packages.outputs.mobile_changed == 'true'
+  create-release:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    concurrency:
-      group: deploy-mobile-${{ github.ref }}
-      cancel-in-progress: true
-    environment: 
-      name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
     steps:
-      - name: Display Environment
-        run: echo "Deploying with $DEPLOYMENT_ENV credentials"
+      - name: Create a new release
+        run: gh --version
 
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  # changed-packages:
+  #   name: Determine which apps changed
+  #   uses: ./.github/workflows/changed-packages.yml
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+  # ci:
+  #   name: CI Checks
+  #   uses: ./.github/workflows/ci.yml
+  #   secrets: inherit  # Pass the secrets to ci workflow
+  #   if: ${{ github.event_name == 'pull_request' }}
 
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
+  # mobile:
+  #   name: Deploy mobile
+  #   needs: [changed-packages, ci]
+  #   if: |
+  #     always() && !failure() && !cancelled() &&
+  #     needs.changed-packages.outputs.mobile_changed == 'true'
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 30
+  #   concurrency:
+  #     group: deploy-mobile-${{ github.ref }}
+  #     cancel-in-progress: true
+  #   environment: 
+  #     name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+  #   steps:
+  #     - name: Display Environment
+  #       run: echo "Deploying with $DEPLOYMENT_ENV credentials"
+
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
+
+  #     - name: Setup pnpm
+  #       uses: pnpm/action-setup@v4
+
+  #     - name: Setup Node.js Environment
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 'lts/*'
+  #         cache: 'pnpm'
       
-      - name: Setup EAS
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
+  #     - name: Setup EAS
+  #       uses: expo/expo-github-action@v8
+  #       with:
+  #         eas-version: latest
+  #         token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+  #     - name: Install Dependencies
+  #       run: pnpm install --frozen-lockfile
 
-      - name: Get fingerprint info
-        id: fingerprints-info
-        uses: expo/expo-github-action/continuous-deploy-fingerprint-info@main
-        with: 
-          profile: ${{ env.DEPLOYMENT_ENV }}
-          working-directory: ./apps/mobile
+  #     - name: Get fingerprint info
+  #       id: fingerprints-info
+  #       uses: expo/expo-github-action/continuous-deploy-fingerprint-info@main
+  #       with: 
+  #         profile: ${{ env.DEPLOYMENT_ENV }}
+  #         working-directory: ./apps/mobile
 
-      - name: Log Fingerprints Info
-        run: |
-          echo "android_build_id: ${{ steps.fingerprints-info.outputs.android-build-id }}"
-          echo "ios_build_id: ${{ steps.fingerprints-info.outputs.ios-build-id }}"
-          echo "android_fingerprint: ${{ steps.fingerprints-info.outputs.android-fingerprint }}"
-          echo "ios_fingerprint: ${{ steps.fingerprints-info.outputs.ios-fingerprint }}"
+  #     - name: Log Fingerprints Info
+  #       run: |
+  #         echo "android_build_id: ${{ steps.fingerprints-info.outputs.android-build-id }}"
+  #         echo "ios_build_id: ${{ steps.fingerprints-info.outputs.ios-build-id }}"
+  #         echo "android_fingerprint: ${{ steps.fingerprints-info.outputs.android-fingerprint }}"
+  #         echo "ios_fingerprint: ${{ steps.fingerprints-info.outputs.ios-fingerprint }}"
 
-      # Ensures turbo caches the build action
-      - name: Build
-        run: pnpm build --filter=mobile
+  #     # Ensures turbo caches the build action
+  #     - name: Build
+  #       run: pnpm build --filter=mobile
 
-      - name: Send OTA Updates
-        id: ota-updates
-        run: |
-          if [[ -n "${{ steps.fingerprints-info.outputs.android-build-id }}" ]]; then
-            # echo "android_update_output=$(eas update -p android --channel ${{ env.DEPLOYMENT_ENV }} --message="Update" --json --non-interactive)"
-            echo "Published OTA Update for Android"
-            echo ANDROID_DEPLOY_URL=https://www.google.com/imghp >> $GITHUB_ENV
-          fi
-          if [[ -n "${{ steps.fingerprints-info.outputs.ios-build-id }}" ]]; then
-            # echo "ios_update_output=$(eas update -p ios --channel ${{ env.DEPLOYMENT_ENV }} --message="Update" --json --non-interactive)"
-            echo "Published OTA Update for iOS"
-            echo IOS_DEPLOY_URL=https://www.youtube.com/podcasts >> $GITHUB_ENV
-          fi
-        working-directory: ./apps/mobile
+  #     - name: Send OTA Updates
+  #       id: ota-updates
+  #       run: |
+  #         if [[ -n "${{ steps.fingerprints-info.outputs.android-build-id }}" ]]; then
+  #           # echo "android_update_output=$(eas update -p android --channel ${{ env.DEPLOYMENT_ENV }} --message="Update" --json --non-interactive)"
+  #           echo "Published OTA Update for Android"
+  #           echo ANDROID_DEPLOY_URL=https://www.google.com/imghp >> $GITHUB_ENV
+  #         fi
+  #         if [[ -n "${{ steps.fingerprints-info.outputs.ios-build-id }}" ]]; then
+  #           # echo "ios_update_output=$(eas update -p ios --channel ${{ env.DEPLOYMENT_ENV }} --message="Update" --json --non-interactive)"
+  #           echo "Published OTA Update for iOS"
+  #           echo IOS_DEPLOY_URL=https://www.youtube.com/podcasts >> $GITHUB_ENV
+  #         fi
+  #       working-directory: ./apps/mobile
 
-      - name: Generate Android Build & Submit to Play Store
-        if: steps.fingerprints-info.outputs.android-build-id == ''
-        id: android-build-and-deploy
-        run: |
-          # echo "android_build_output=$(eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json)"
-          echo "Generated and deployed the android build"
-          echo ANDROID_DEPLOY_URL=https://www.google.com/imghp >> $GITHUB_ENV
-        working-directory: ./apps/mobile
+  #     - name: Generate Android Build & Submit to Play Store
+  #       if: steps.fingerprints-info.outputs.android-build-id == ''
+  #       id: android-build-and-deploy
+  #       run: |
+  #         # echo "android_build_output=$(eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json)"
+  #         echo "Generated and deployed the android build"
+  #         echo ANDROID_DEPLOY_URL=https://www.google.com/imghp >> $GITHUB_ENV
+  #       working-directory: ./apps/mobile
 
-      - name: Generate iOS Build & Submit to App Store
-        if: steps.fingerprints-info.outputs.ios-build-id == ''
-        id: ios-build-and-deploy
-        run: |
-          # echo "ios_build_output=$(eas build -p ios -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json)"
-          echo "Generated and deployed the ios build"
-          echo IOS_DEPLOY_URL=https://www.youtube.com/podcasts >> $GITHUB_ENV
-        working-directory: ./apps/mobile
+  #     - name: Generate iOS Build & Submit to App Store
+  #       if: steps.fingerprints-info.outputs.ios-build-id == ''
+  #       id: ios-build-and-deploy
+  #       run: |
+  #         # echo "ios_build_output=$(eas build -p ios -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json)"
+  #         echo "Generated and deployed the ios build"
+  #         echo IOS_DEPLOY_URL=https://www.youtube.com/podcasts >> $GITHUB_ENV
+  #       working-directory: ./apps/mobile
 
-      - name: Print the deploy urls
-        run: |
-          echo "deploy_url=${{ env.ANDROID_DEPLOY_URL }}"
-          echo "deploy_url=${{ env.IOS_DEPLOY_URL }}"
+  #     - name: Print the deploy urls
+  #       run: |
+  #         echo "deploy_url=${{ env.ANDROID_DEPLOY_URL }}"
+  #         echo "deploy_url=${{ env.IOS_DEPLOY_URL }}"
 
-  docs:
-    name: Deploy docs
-    needs: [changed-packages, ci]
-    if: |
-      always() && !failure() && !cancelled() &&
-      needs.changed-packages.outputs.docs_changed == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    concurrency:
-      group: deploy-docs-${{ github.ref }}
-      cancel-in-progress: true
-    environment: 
-      name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
-    steps:
-      - name: Display Environment
-        run: echo "Deploying with $DEPLOYMENT_ENV credentials"
+  # docs:
+  #   name: Deploy docs
+  #   needs: [changed-packages, ci]
+  #   if: |
+  #     always() && !failure() && !cancelled() &&
+  #     needs.changed-packages.outputs.docs_changed == 'true'
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 15
+  #   concurrency:
+  #     group: deploy-docs-${{ github.ref }}
+  #     cancel-in-progress: true
+  #   environment: 
+  #     name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+  #   steps:
+  #     - name: Display Environment
+  #       run: echo "Deploying with $DEPLOYMENT_ENV credentials"
 
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+  #     - name: Install pnpm
+  #       uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
+  #     - name: Setup Node.js Environment
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 'lts/*'
+  #         cache: 'pnpm'
 
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+  #     - name: Install Dependencies
+  #       run: pnpm install --frozen-lockfile
 
-      - name: Install Vercel CLI
-        run: pnpm add -g vercel
+  #     - name: Install Vercel CLI
+  #       run: pnpm add -g vercel
 
-      - name: Pull Vercel Environment Information
-        run: echo "Pulled env from vercel server"
-        working-directory: ./apps/docs
+  #     - name: Pull Vercel Environment Information
+  #       run: echo "Pulled env from vercel server"
+  #       working-directory: ./apps/docs
 
-      # Ensures turbo caches the build action
-      - name: Build
-        run: pnpm build --filter=docs
+  #     # Ensures turbo caches the build action
+  #     - name: Build
+  #       run: pnpm build --filter=docs
 
-      - name: Deploy
-        id: deploy-docs
-        run: |
-          echo deploy_url=https://docs-1234567891234567-preview.vercel.app
-          echo "Deployment Successful"
-        working-directory: ./apps/docs
+  #     - name: Deploy
+  #       id: deploy-docs
+  #       run: |
+  #         echo deploy_url=https://docs-1234567891234567-preview.vercel.app
+  #         echo "Deployment Successful"
+  #       working-directory: ./apps/docs
 
-  web:
-    name: Deploy web
-    needs: [changed-packages, ci]
-    if: |
-      always() && !failure() && !cancelled() &&
-      needs.changed-packages.outputs.web_changed == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    concurrency:
-      group: deploy-web-${{ github.ref }}
-      cancel-in-progress: true
-    environment: 
-      name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
-    steps:
-      - name: Display Environment
-        run: echo "Deploying with $DEPLOYMENT_ENV credentials"
+  # web:
+  #   name: Deploy web
+  #   needs: [changed-packages, ci]
+  #   if: |
+  #     always() && !failure() && !cancelled() &&
+  #     needs.changed-packages.outputs.web_changed == 'true'
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 15
+  #   concurrency:
+  #     group: deploy-web-${{ github.ref }}
+  #     cancel-in-progress: true
+  #   environment: 
+  #     name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+  #   steps:
+  #     - name: Display Environment
+  #       run: echo "Deploying with $DEPLOYMENT_ENV credentials"
 
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+  #     - name: Install pnpm
+  #       uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
+  #     - name: Setup Node.js Environment
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 'lts/*'
+  #         cache: 'pnpm'
 
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+  #     - name: Install Dependencies
+  #       run: pnpm install --frozen-lockfile
 
-      - name: Install Vercel CLI
-        run: pnpm add -g vercel
+  #     - name: Install Vercel CLI
+  #       run: pnpm add -g vercel
 
-      - name: Pull Vercel Environment Information
-        run: vercel pull -y --environment=$DEPLOYMENT_ENV --token $TURBO_TOKEN
-        working-directory: ./apps/web
+  #     - name: Pull Vercel Environment Information
+  #       run: vercel pull -y --environment=$DEPLOYMENT_ENV --token $TURBO_TOKEN
+  #       working-directory: ./apps/web
 
-      # Ensures turbo caches the build action
-      - name: Build
-        run: pnpm build --filter=web
+  #     # Ensures turbo caches the build action
+  #     - name: Build
+  #       run: pnpm build --filter=web
 
-      - name: Deploy
-        run: |
-          echo "deploy_url=$(vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN)"
-          echo "Deployment Successful"
-        working-directory: ./apps/web
+  #     - name: Deploy
+  #       run: |
+  #         echo "deploy_url=$(vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN)"
+  #         echo "Deployment Successful"
+  #       working-directory: ./apps/web
   
   
