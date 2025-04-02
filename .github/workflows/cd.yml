@@ -24,39 +24,38 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
-      - name: Create a new release
-        run: gh --version
-
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: true  # Ensure submodules are checked out if apps/packages are submodules
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-  
       - name: Generate GitHub Release for Each Package/App
         if: success()
         run: |
-          # Create a release for each package/app
           echo "Starting to generate releases for each package/app..."
 
+          # Loop over apps and packages directories (apps/* and packages/*)
           for dir in apps/* packages/*; do
-            if [ -f "$dir/CHANGELOG.md" ]; then
-              VERSION=$(node -p "require('$dir/package.json').version")
-              PACKAGE_NAME=$(basename $dir)
-              CHANGELOG=$(cat $dir/CHANGELOG.md)
-              echo "Creating release for $PACKAGE_NAME"
-              # gh release create v$VERSION --title "Release $VERSION for $PACKAGE_NAME" --notes "$CHANGELOG" --target main
+            # Check if the directory exists and is a folder (not a file)
+            if [ -d "$dir" ]; then
+              # Check if CHANGELOG.md exists in the directory
+              if [ -f "$dir/CHANGELOG.md" ]; then
+                echo "Found CHANGELOG.md in $dir"
+                
+                # Get the version from the package.json in that directory
+                VERSION=$(node -p "require('$dir/package.json').version")
+                PACKAGE_NAME=$(basename $dir)
+                CHANGELOG=$(cat $dir/CHANGELOG.md)
+
+                echo "Creating release for $PACKAGE_NAME with version $VERSION"
+                echo "Release created for $PACKAGE_NAME"
+              else
+                echo "No CHANGELOG.md found in $dir"
+              fi
             fi
           done
-          echo "Generated"
+
+          echo "Release creation process completed."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
