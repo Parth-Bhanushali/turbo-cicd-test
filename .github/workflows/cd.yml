@@ -26,11 +26,25 @@ jobs:
     steps:
       - name: Create a new release
         run: gh --version
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
   
       - name: Generate GitHub Release for Each Package/App
         if: success()
         run: |
           # Create a release for each package/app
+          echo "Starting to generate releases for each package/app..."
+
           for dir in apps/* packages/*; do
             if [ -f "$dir/CHANGELOG.md" ]; then
               VERSION=$(node -p "require('$dir/package.json').version")
