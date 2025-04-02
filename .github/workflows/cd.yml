@@ -90,12 +90,12 @@ jobs:
         id: ota-updates
         run: |
           if [[ -n "${{ steps.fingerprints-info.outputs.android-build-id }}" ]]; then
-            echo "android_update_output=$(eas update -p android --channel ${{ env.DEPLOYMENT_ENV }} --message="Update" --json --non-interactive)"
+            # echo "android_update_output=$(eas update -p android --channel ${{ env.DEPLOYMENT_ENV }} --message="Update" --json --non-interactive)"
             echo "Published OTA Update for Android"
             echo ANDROID_DEPLOY_URL=https://www.google.com/imghp >> $GITHUB_ENV
           fi
           if [[ -n "${{ steps.fingerprints-info.outputs.ios-build-id }}" ]]; then
-            echo "ios_update_output=$(eas update -p ios --channel ${{ env.DEPLOYMENT_ENV }} --message="Update" --json --non-interactive)"
+            # echo "ios_update_output=$(eas update -p ios --channel ${{ env.DEPLOYMENT_ENV }} --message="Update" --json --non-interactive)"
             echo "Published OTA Update for iOS"
             echo IOS_DEPLOY_URL=https://www.youtube.com/podcasts >> $GITHUB_ENV
           fi
@@ -105,7 +105,7 @@ jobs:
         if: steps.fingerprints-info.outputs.android-build-id == ''
         id: android-build-and-deploy
         run: |
-          echo "android_build_output=$(eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json)"
+          # echo "android_build_output=$(eas build -p android -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json)"
           echo "Generated and deployed the android build"
           echo ANDROID_DEPLOY_URL=https://www.google.com/imghp >> $GITHUB_ENV
         working-directory: ./apps/mobile
@@ -114,7 +114,7 @@ jobs:
         if: steps.fingerprints-info.outputs.ios-build-id == ''
         id: ios-build-and-deploy
         run: |
-          echo "ios_build_output=$(eas build -p ios -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json)"
+          # echo "ios_build_output=$(eas build -p ios -e ${{ env.DEPLOYMENT_ENV }} --non-interactive --json)"
           echo "Generated and deployed the ios build"
           echo IOS_DEPLOY_URL=https://www.youtube.com/podcasts >> $GITHUB_ENV
         working-directory: ./apps/mobile
