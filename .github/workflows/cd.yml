@@ -53,6 +53,7 @@ jobs:
               PACKAGE_NAME=$(basename $dir)
               CHANGELOG=$(cat $dir/CHANGELOG.md)
               echo "Creating release for $PACKAGE_NAME and path is $dir and version is $VERSION"
+              echo "Changelog $CHANGELOG"
               # gh release create v$VERSION --title "Release $VERSION for $PACKAGE_NAME" --notes "$CHANGELOG" --target main
             fi
           done
