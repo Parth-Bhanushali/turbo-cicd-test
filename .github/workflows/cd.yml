@@ -50,7 +50,7 @@ jobs:
                 # Check if package.json exists in the directory
                 if [ -f "$dir/package.json" ]; then
                   # Get the version from the package.json in that directory
-                  VERSION=$(node -p "require('$dir/package.json').version")
+                  # VERSION=$(node -p "require('$dir/package.json').version")
                   PACKAGE_NAME=$(basename $dir)
                   CHANGELOG=$(cat $dir/CHANGELOG.md)
   
