@@ -1,0 +1,124 @@
+name: Changeset
+
+on: workflow_call
+
+jobs:
+  release:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      # Step 2: Check if Changesets Exist
+      - name: Check for changesets
+        id: changeset-check
+        run: |
+          # Check if there are any .md files in the .changeset directory,
+          # excluding README.md
+          CHANGESET_FILES=$(find .changeset -type f -name "*.md" ! -name "README.md" | wc -l)
+
+          if [ "$CHANGESET_FILES" -gt 0 ]; then
+            echo "Changesets found, proceeding with version bump and release process."
+            echo "result=true" >> $GITHUB_OUTPUT
+          else
+            echo "No changesets found, skipping version bump and release process."
+            echo "result=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Step 3: Setup pnpm
+      - name: Setup pnpm
+        if: steps.changeset-check.outputs.result == 'true'
+        uses: pnpm/action-setup@v4
+
+      # Step 4: Setup Node.js environment
+      - name: Setup Node.js Environment
+        if: steps.changeset-check.outputs.result == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      # Step 5: Install Dependencies
+      - name: Install Dependencies
+        if: steps.changeset-check.outputs.result == 'true'
+        run: pnpm install --frozen-lockfile
+
+      # Step 6: Bump versions if Changesets Exist
+      - name: Run Version Bump
+        if: steps.changeset-check.outputs.result == 'true'
+        run: 
+          pnpm changeset:bump
+
+      # Step 7.1: Prepare Release Notes
+      - name: Create Releases
+        if: steps.changeset-check.outputs.result == 'true'
+        run: |
+          echo "Preparing release notes"
+
+          for dir in apps/* packages/*; do
+            if [ -f "$dir/CHANGELOG.md" ]; then
+              PACKAGE_NAME=$(basename $dir)
+              CHANGELOG=$(git diff --unified=0 $dir/CHANGELOG.md | grep -vE '^\+\+\+' | grep -E '^\+' | sed 's/^+//')
+              if [ -n "$CHANGELOG" ]; then
+                echo "$CHANGELOG" > "$dir/release-notes.txt"
+                echo "Created release notes for $PACKAGE_NAME"
+              fi
+            fi
+          done
+
+      # Step 7.2: Commit Changes for Version Bump
+      - name: Commit Version Bump
+        if: steps.changeset-check.outputs.result == 'true'
+        run: |
+          echo "Commit changes for version bump"
+          
+          git add -A .changeset/
+          git add apps/*/CHANGELOG.md packages/*/CHANGELOG.md
+          git add apps/*/package.json packages/*/package.json
+          git config --global user.name "CI/CD GitHub Bot"
+          git config --global user.email "52828668+Parth-Bhanushali@users.noreply.github.com"
+          git commit -m "[ci]: Release"
+
+      # Step 7.3: Create Releases
+      - name: Create Releases
+        if: steps.changeset-check.outputs.result == 'true'
+        run: |
+          echo "Creating releases for modified packages/apps..."
+          
+          for dir in apps/* packages/*; do
+            if [ -f "$dir/release-notes.txt" ]; then
+              VERSION=$(node -p "require('./$dir/package.json').version")
+              PACKAGE_NAME=$(basename $dir)
+              TAG_NAME="$PACKAGE_NAME@$VERSION"
+              CHANGELOG=$(cat "$dir/release-notes.txt")
+              
+              echo "Creating release for $PACKAGE_NAME with version $VERSION"
+
+              gh release create "$TAG_NAME" \
+                --title "$TAG_NAME" \
+                --notes "$CHANGELOG" \
+                --target develop
+
+              echo "Release created for $PACKAGE_NAME"
+            fi
+          done
+        
+      # Step 7.4: Clean Up Release Note Files
+      - name: Clean Up Release Note Files
+        if: steps.changeset-check.outputs.result == 'true'
+        run: |
+          echo "Cleaning up release note files..."
+          rm -rf apps/*/release-notes.txt packages/*/release-notes.txt
+
+      # Step 7.5: Push Changes to Repository
+      - name: Push Changes to Repository
+        if: steps.changeset-check.outputs.result == 'true'
+        run: |
+          echo "Pushing changes to the repository..."
+          git push origin HEAD:develop --force
