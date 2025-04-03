@@ -1,5 +1,11 @@
 # docs
 
+## 0.1.4
+
+### Patch Changes
+
+- aca16d4: Only version change
+
 ## 0.1.3
 
 ### Patch Changes
