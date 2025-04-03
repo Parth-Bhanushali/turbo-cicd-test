@@ -115,6 +115,9 @@ jobs:
             fi
           done
 
+          echo "Cleaning up release note files..."
+          rm -rf apps/*/release-notes.txt packages/*/release-notes.txt
+
           echo "Pushing changes to the repository..."
           git push origin HEAD:develop --force
 
