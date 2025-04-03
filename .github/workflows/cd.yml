@@ -62,6 +62,7 @@ jobs:
 
       # Step 5: Install Dependencies
       - name: Install Dependencies
+        if: steps.changeset-check.outputs.result == 'true'
         run: pnpm install --frozen-lockfile
 
       # Step 6: Bump versions if Changesets Exist
