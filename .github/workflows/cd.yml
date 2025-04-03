@@ -101,11 +101,12 @@ jobs:
             if [ -f "$dir/release-notes.txt" ]; then
               VERSION=$(node -p "require('./$dir/package.json').version")
               PACKAGE_NAME=$(basename $dir)
+              TAG_NAME="$PACKAGE_NAME@$VERSION"
               CHANGELOG=$(cat "$dir/release-notes.txt")
               
               echo "Creating release for $PACKAGE_NAME with version $VERSION"
 
-              gh release create "v$VERSION" \
+              gh release create "v$TAG_NAME" \
                 --title "Release v$VERSION for $PACKAGE_NAME" \
                 --notes "$CHANGELOG" \
                 --target develop
