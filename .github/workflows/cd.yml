@@ -106,7 +106,7 @@ jobs:
               echo "Creating release for $PACKAGE_NAME with version $VERSION"
 
               gh release create "v$VERSION" \
-                --title "Release v$VERSION for $PACKAGE_NAME" \ 
+                --title "Release v$VERSION for $PACKAGE_NAME" \
                 --notes "$CHANGELOG" \
                 --target develop
 
