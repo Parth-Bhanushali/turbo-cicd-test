@@ -70,7 +70,7 @@ jobs:
         run: 
           pnpm changeset:bump
 
-      # Step 7: Commit Version Bump and Create Releases
+      # Step 7.1: Prepare Release Notes
       - name: Create Releases
         if: steps.changeset-check.outputs.result == 'true'
         run: |
@@ -87,15 +87,23 @@ jobs:
             fi
           done
 
+      # Step 7.2: Commit Changes for Version Bump
+      - name: Commit Version Bump
+        if: steps.changeset-check.outputs.result == 'true'
+        run: |
           echo "Commit changes for version bump"
           
           git add -A .changeset/
           git add apps/*/CHANGELOG.md packages/*/CHANGELOG.md
           git add apps/*/package.json packages/*/package.json
-          git config --global user.name "Automation Bot"
-          git config --global user.email "automation-bot@users.noreply.github.com"
+          git config --global user.name "CI/CD GitHub Bot"
+          git config --global user.email "52828668+Parth-Bhanushali@users.noreply.github.com"
           git commit -m "[ci]: Release"
 
+      # Step 7.3: Create Releases
+      - name: Create Releases
+        if: steps.changeset-check.outputs.result == 'true'
+        run: |
           echo "Creating releases for modified packages/apps..."
           
           for dir in apps/* packages/*; do
@@ -115,10 +123,18 @@ jobs:
               echo "Release created for $PACKAGE_NAME"
             fi
           done
-
+        
+      # Step 7.4: Clean Up Release Note Files
+      - name: Clean Up Release Note Files
+        if: steps.changeset-check.outputs.result == 'true'
+        run: |
           echo "Cleaning up release note files..."
           rm -rf apps/*/release-notes.txt packages/*/release-notes.txt
 
+      # Step 7.5: Push Changes to Repository
+      - name: Push Changes to Repository
+        if: steps.changeset-check.outputs.result == 'true'
+        run: |
           echo "Pushing changes to the repository..."
           git push origin HEAD:develop --force
 
