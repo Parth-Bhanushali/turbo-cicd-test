@@ -31,7 +31,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          submodules: true
+          ref: develop
 
       # Step 2: Setup pnpm
       - name: Setup pnpm
