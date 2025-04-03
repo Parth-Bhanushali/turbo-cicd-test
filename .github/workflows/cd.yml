@@ -89,7 +89,7 @@ jobs:
 
           echo "Commit changes for version bump"
           
-          git add .changeset/*
+          git add -A .changeset/
           git add apps/*/CHANGELOG.md packages/*/CHANGELOG.md
           git add apps/*/package.json packages/*/package.json
           git config --global user.name "Automation Bot"
