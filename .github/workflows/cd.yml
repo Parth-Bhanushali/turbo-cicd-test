@@ -60,13 +60,17 @@ jobs:
             echo "result=false" >> $GITHUB_OUTPUT
           fi
 
-      # Step 5: Bump versions if Changesets Exist
+      # Step 5: Install Dependencies
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Step 6: Bump versions if Changesets Exist
       - name: Run Version Bump
         if: steps.changeset-check.outputs.result == 'true'
         run: 
           pnpm changeset:bump
 
-      # Step 6: Commit Version Bump and Create Releases
+      # Step 7: Commit Version Bump and Create Releases
       - name: Create Releases
         if: steps.changeset-check.outputs.result == 'true'
         run: |
