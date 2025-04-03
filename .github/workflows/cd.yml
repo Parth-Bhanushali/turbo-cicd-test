@@ -91,6 +91,7 @@ jobs:
           
           git add .changeset/*
           git add apps/*/CHANGELOG.md packages/*/CHANGELOG.md
+          git add apps/*/package.json packages/*/package.json
           git config --global user.name "Automation Bot"
           git config --global user.email "automation-bot@users.noreply.github.com"
           git commit -m "[ci]: Release"
