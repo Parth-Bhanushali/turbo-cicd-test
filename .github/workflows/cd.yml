@@ -33,18 +33,7 @@ jobs:
         with:
           ref: develop
 
-      # Step 2: Setup pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      # Step 3: Setup Node.js environment
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-
-      # Step 4: Check if Changesets Exist
+      # Step 2: Check if Changesets Exist
       - name: Check for changesets
         id: changeset-check
         run: |
@@ -59,6 +48,19 @@ jobs:
             echo "No changesets found, skipping version bump and release process."
             echo "result=false" >> $GITHUB_OUTPUT
           fi
+
+      # Step 3: Setup pnpm
+      - name: Setup pnpm
+        if: steps.changeset-check.outputs.result == 'true'
+        uses: pnpm/action-setup@v4
+
+      # Step 4: Setup Node.js environment
+      - name: Setup Node.js Environment
+        if: steps.changeset-check.outputs.result == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
 
       # Step 5: Install Dependencies
       - name: Install Dependencies
