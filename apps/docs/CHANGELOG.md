@@ -1,5 +1,11 @@
 # docs
 
+## 0.1.6
+
+### Patch Changes
+
+- a66fa11: Only version change
+
 ## 0.1.5
 
 ### Patch Changes
