@@ -115,7 +115,7 @@ jobs:
           done
 
           echo "Pushing changes to the repository..."
-          git push
+          git push origin HEAD:develop --force
 
   # changed-packages:
   #   name: Determine which apps changed
