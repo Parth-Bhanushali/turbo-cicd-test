@@ -1,14 +1,14 @@
-name: Changeset
+name: Release
 
 on: workflow_call
 
 concurrency:
-  group: changeset-${{ github.head_ref }}
+  group: release-${{ github.head_ref }}
   cancel-in-progress: false
   
 jobs:
-  release:
-    name: Release
+  version:
+    name: Version
     timeout-minutes: 15
     runs-on: ubuntu-latest
     env:
