@@ -30,16 +30,15 @@ jobs:
     secrets: inherit  # Pass the secrets to ci workflow
     if: ${{ github.event_name == 'pull_request' }}
 
-  # release:
-  #   name: Release
-  #   uses: ./.github/workflows/release.yml
-  #   secrets: inherit  # Pass the secrets to release workflow
-  #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+  release:
+    name: Release
+    uses: ./.github/workflows/release.yml
+    secrets: inherit  # Pass the secrets to release workflow
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
   docs:
     name: Deploy docs
-    needs: [changed-packages, ci]
-    # needs: [changed-packages, ci, release]
+    needs: [changed-packages, ci, release]
     if: |
       always() && !failure() && !cancelled() &&
       needs.changed-packages.outputs.docs_changed == 'true'
@@ -89,8 +88,7 @@ jobs:
 
   web:
     name: Deploy web
-    needs: [changed-packages, ci]
-    # needs: [changed-packages, ci, release]
+    needs: [changed-packages, ci, release]
     if: |
       always() && !failure() && !cancelled() &&
       needs.changed-packages.outputs.web_changed == 'true'
@@ -139,8 +137,7 @@ jobs:
 
   mobile:
     name: Deploy mobile
-    needs: [changed-packages, ci]
-    # needs: [changed-packages, ci, release]
+    needs: [changed-packages, ci, release]
     if: |
       always() && !failure() && !cancelled() &&
       needs.changed-packages.outputs.mobile_changed == 'true'
