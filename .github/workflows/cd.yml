@@ -38,7 +38,7 @@ jobs:
 
   docs:
     name: Deploy docs
-    needs: [changed-packages, ci]
+    needs: [changed-packages, ci, changeset]
     if: |
       always() && !failure() && !cancelled() &&
       needs.changed-packages.outputs.docs_changed == 'true'
