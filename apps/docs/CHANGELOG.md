@@ -1,5 +1,11 @@
 # docs
 
+## 0.1.8
+
+### Patch Changes
+
+- a99c51f: Only Version Change
+
 ## 0.1.7
 
 ### Patch Changes
