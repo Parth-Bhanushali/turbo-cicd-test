@@ -1,5 +1,15 @@
 # mobile
 
+## 1.4.0
+
+### Minor Changes
+
+- 277130b: Only Version Change
+
+### Patch Changes
+
+- 277130b: Only Version Change
+
 ## 1.3.0
 
 ### Minor Changes
