@@ -14,7 +14,6 @@ permissions:
   deployments: write
 
 env:
-  NODE_ENV: ${{ vars.NODE_ENV }}
   DEPLOYMENT_ENV: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ vars.TURBO_TEAM }}
@@ -129,7 +128,12 @@ jobs:
       # 123
       # Ensures turbo caches the build action
       - name: Build
-        run: pnpm build --filter=web
+        run: |
+          if [ "$DEPLOYMENT_ENV" = "production" ]; then
+            pnpm build --filter=web -- --prod
+          else
+            pnpm build --filter=web
+          fi
 
       - name: Deploy
         run: |
