@@ -18,7 +18,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: main
 
       # Step 2: Check if Changesets Exist
       - name: Check for changesets
@@ -108,7 +108,7 @@ jobs:
               gh release create "$TAG_NAME" \
                 --title "$TAG_NAME" \
                 --notes "$CHANGELOG" \
-                --target develop
+                --target main
 
               echo "Release created for $PACKAGE_NAME"
             fi
@@ -126,4 +126,4 @@ jobs:
         if: steps.changeset-check.outputs.result == 'true'
         run: |
           echo "Pushing changes to the repository..."
-          git push origin HEAD:develop --force
+          git push origin HEAD:main --force
