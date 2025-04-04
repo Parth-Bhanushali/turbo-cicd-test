@@ -1,5 +1,15 @@
 # mobile
 
+## 1.1.0
+
+### Minor Changes
+
+- 4c650b7: Only Version Change
+
+### Patch Changes
+
+- 4c650b7: Only Version Change
+
 ## 1.0.4
 
 ### Patch Changes
