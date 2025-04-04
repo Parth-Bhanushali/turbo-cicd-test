@@ -14,6 +14,7 @@ permissions:
   deployments: write
 
 env:
+  NODE_ENV: ${{ vars.NODE_ENV }}
   DEPLOYMENT_ENV: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ vars.TURBO_TEAM }}
