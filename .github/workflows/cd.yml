@@ -35,6 +35,7 @@ jobs:
     uses: ./.github/workflows/changeset.yml
     needs: [changed-packages]
     secrets: inherit  # Pass the secrets to changeset workflow
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
   docs:
     name: Deploy docs
