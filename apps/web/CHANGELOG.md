@@ -1,5 +1,11 @@
 # web
 
+## 0.6.0
+
+### Minor Changes
+
+- ca36f48: Only Version Change
+
 ## 0.5.0
 
 ### Minor Changes
