@@ -1,5 +1,15 @@
 # mobile
 
+## 1.5.0
+
+### Minor Changes
+
+- ca36f48: Only Version Change
+
+### Patch Changes
+
+- ca36f48: Only Version Change
+
 ## 1.4.0
 
 ### Minor Changes
