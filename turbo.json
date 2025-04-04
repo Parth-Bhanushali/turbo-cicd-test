@@ -7,8 +7,9 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*", "env.NODE_ENV"],
-      "outputs": [".next/**", "!.next/cache/**", ".vercel/output/**", "dist/**"]
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", ".vercel/output/**", "dist/**"],
+      "env": ["NODE_ENV", "DEPLOYMENT_ENV"]
     },
     "lint": {
       "dependsOn": ["^lint"]
