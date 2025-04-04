@@ -1,5 +1,15 @@
 # docs
 
+## 0.5.0
+
+### Minor Changes
+
+- 277130b: Only Version Change
+
+### Patch Changes
+
+- 277130b: Only Version Change
+
 ## 0.4.0
 
 ### Minor Changes
