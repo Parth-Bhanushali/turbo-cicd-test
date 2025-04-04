@@ -33,7 +33,7 @@ jobs:
   release:
     name: Release
     uses: ./.github/workflows/release.yml
-    secrets: inherit  # Pass the secrets to changeset workflow
+    secrets: inherit  # Pass the secrets to release workflow
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
   docs:
