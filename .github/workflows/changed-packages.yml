@@ -1,5 +1,5 @@
 # Turbo dry run to determine which apps have changed between the latest commit and target or previous commit
-name: 'Determine changed packages'
+name: 'Changed Packages'
 
 on:
   workflow_call:
