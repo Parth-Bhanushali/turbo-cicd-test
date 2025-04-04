@@ -1,5 +1,15 @@
 # mobile
 
+## 1.3.0
+
+### Minor Changes
+
+- 752dde7: Only Version Change
+
+### Patch Changes
+
+- 752dde7: Only Version Change
+
 ## 1.2.0
 
 ### Minor Changes
