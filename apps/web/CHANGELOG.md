@@ -1,5 +1,11 @@
 # web
 
+## 0.2.0
+
+### Minor Changes
+
+- 4c650b7: Only Version Change
+
 ## 0.1.1
 
 ### Patch Changes
