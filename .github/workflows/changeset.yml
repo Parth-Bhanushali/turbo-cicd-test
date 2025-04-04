@@ -2,8 +2,13 @@ name: Changeset
 
 on: workflow_call
 
+concurrency:
+  group: changeset-${{ github.head_ref }}
+  cancel-in-progress: false
+  
 jobs:
   release:
+    name: Release
     timeout-minutes: 15
     runs-on: ubuntu-latest
     env:
@@ -56,7 +61,7 @@ jobs:
           pnpm changeset:bump
 
       # Step 7.1: Prepare Release Notes
-      - name: Create Releases
+      - name: Prepare Release Notes
         if: steps.changeset-check.outputs.result == 'true'
         run: |
           echo "Preparing release notes"

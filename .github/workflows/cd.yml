@@ -36,6 +36,105 @@ jobs:
     needs: [changed-packages]
     secrets: inherit  # Pass the secrets to changeset workflow
 
+  docs:
+    name: Deploy docs
+    needs: [changed-packages, ci]
+    if: |
+      always() && !failure() && !cancelled() &&
+      needs.changed-packages.outputs.docs_changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: deploy-docs-${{ github.ref }}
+      cancel-in-progress: true
+    environment: 
+      name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+    steps:
+      - name: Display Environment
+        run: echo "Deploying with $DEPLOYMENT_ENV credentials"
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel
+
+      - name: Pull Vercel Environment Information
+        run: echo "Pulled env from vercel server"
+        working-directory: ./apps/docs
+
+      # Ensures turbo caches the build action
+      - name: Build
+        run: pnpm build --filter=docs
+
+      - name: Deploy
+        id: deploy-docs
+        run: |
+          echo deploy_url=https://docs-1234567891234567-preview.vercel.app
+          echo "Deployment Successful"
+        working-directory: ./apps/docs
+
+  # web:
+  #   name: Deploy web
+  #   needs: [changed-packages, ci]
+  #   if: |
+  #     always() && !failure() && !cancelled() &&
+  #     needs.changed-packages.outputs.web_changed == 'true'
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 15
+  #   concurrency:
+  #     group: deploy-web-${{ github.ref }}
+  #     cancel-in-progress: true
+  #   environment: 
+  #     name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+  #   steps:
+  #     - name: Display Environment
+  #       run: echo "Deploying with $DEPLOYMENT_ENV credentials"
+
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
+
+  #     - name: Install pnpm
+  #       uses: pnpm/action-setup@v4
+
+  #     - name: Setup Node.js Environment
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 'lts/*'
+  #         cache: 'pnpm'
+
+  #     - name: Install Dependencies
+  #       run: pnpm install --frozen-lockfile
+
+  #     - name: Install Vercel CLI
+  #       run: pnpm add -g vercel
+
+  #     - name: Pull Vercel Environment Information
+  #       run: vercel pull -y --environment=$DEPLOYMENT_ENV --token $TURBO_TOKEN
+  #       working-directory: ./apps/web
+
+  #     # Ensures turbo caches the build action
+  #     - name: Build
+  #       run: pnpm build --filter=web
+
+  #     - name: Deploy
+  #       run: |
+  #         echo "deploy_url=$(vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN)"
+  #         echo "Deployment Successful"
+  #       working-directory: ./apps/web
+
   # mobile:
   #   name: Deploy mobile
   #   needs: [changed-packages, ci]
@@ -129,104 +228,5 @@ jobs:
   #       run: |
   #         echo "deploy_url=${{ env.ANDROID_DEPLOY_URL }}"
   #         echo "deploy_url=${{ env.IOS_DEPLOY_URL }}"
-
-  # docs:
-  #   name: Deploy docs
-  #   needs: [changed-packages, ci]
-  #   if: |
-  #     always() && !failure() && !cancelled() &&
-  #     needs.changed-packages.outputs.docs_changed == 'true'
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 15
-  #   concurrency:
-  #     group: deploy-docs-${{ github.ref }}
-  #     cancel-in-progress: true
-  #   environment: 
-  #     name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
-  #   steps:
-  #     - name: Display Environment
-  #       run: echo "Deploying with $DEPLOYMENT_ENV credentials"
-
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v4
-
-  #     - name: Install pnpm
-  #       uses: pnpm/action-setup@v4
-
-  #     - name: Setup Node.js Environment
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 'lts/*'
-  #         cache: 'pnpm'
-
-  #     - name: Install Dependencies
-  #       run: pnpm install --frozen-lockfile
-
-  #     - name: Install Vercel CLI
-  #       run: pnpm add -g vercel
-
-  #     - name: Pull Vercel Environment Information
-  #       run: echo "Pulled env from vercel server"
-  #       working-directory: ./apps/docs
-
-  #     # Ensures turbo caches the build action
-  #     - name: Build
-  #       run: pnpm build --filter=docs
-
-  #     - name: Deploy
-  #       id: deploy-docs
-  #       run: |
-  #         echo deploy_url=https://docs-1234567891234567-preview.vercel.app
-  #         echo "Deployment Successful"
-  #       working-directory: ./apps/docs
-
-  # web:
-  #   name: Deploy web
-  #   needs: [changed-packages, ci]
-  #   if: |
-  #     always() && !failure() && !cancelled() &&
-  #     needs.changed-packages.outputs.web_changed == 'true'
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 15
-  #   concurrency:
-  #     group: deploy-web-${{ github.ref }}
-  #     cancel-in-progress: true
-  #   environment: 
-  #     name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'production' || 'preview' }}
-  #   steps:
-  #     - name: Display Environment
-  #       run: echo "Deploying with $DEPLOYMENT_ENV credentials"
-
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v4
-
-  #     - name: Install pnpm
-  #       uses: pnpm/action-setup@v4
-
-  #     - name: Setup Node.js Environment
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 'lts/*'
-  #         cache: 'pnpm'
-
-  #     - name: Install Dependencies
-  #       run: pnpm install --frozen-lockfile
-
-  #     - name: Install Vercel CLI
-  #       run: pnpm add -g vercel
-
-  #     - name: Pull Vercel Environment Information
-  #       run: vercel pull -y --environment=$DEPLOYMENT_ENV --token $TURBO_TOKEN
-  #       working-directory: ./apps/web
-
-  #     # Ensures turbo caches the build action
-  #     - name: Build
-  #       run: pnpm build --filter=web
-
-  #     - name: Deploy
-  #       run: |
-  #         echo "deploy_url=$(vercel deploy --prebuilt --target $DEPLOYMENT_ENV --token $TURBO_TOKEN)"
-  #         echo "Deployment Successful"
-  #       working-directory: ./apps/web
   
   
