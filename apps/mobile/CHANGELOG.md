@@ -1,5 +1,15 @@
 # mobile
 
+## 1.2.0
+
+### Minor Changes
+
+- a8d5e96: Only Version Change
+
+### Patch Changes
+
+- a8d5e96: Only Version Change
+
 ## 1.1.0
 
 ### Minor Changes
