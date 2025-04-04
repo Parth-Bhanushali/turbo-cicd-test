@@ -1,0 +1,33 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalDependencies": [
+    ".github/workflows/**"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", ".vercel/output/**", "dist/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "lint:check": {
+      "dependsOn": ["^lint:check"]
+    },
+    "format": {
+      "dependsOn": ["^format"]
+    },
+    "format:check": {
+      "dependsOn": ["^format:check"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

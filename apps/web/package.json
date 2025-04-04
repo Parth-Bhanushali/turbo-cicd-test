@@ -1,0 +1,36 @@
+{
+  "name": "web",
+  "version": "0.1.1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack --port 3000",
+    "build": "vercel build",
+    "start": "next start",
+    "lint": "next lint . --fix",
+    "lint:check": "next lint . --max-warnings 0",
+    "format": "prettier . --write \"**/*.{js,jsx,ts,tsx}\" --ignore-unknown",
+    "format:check": "prettier . --check",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/ui": "workspace:*",
+    "next": "^15.2.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "styled-jsx": "^5.1.2"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.13.9",
+    "@types/react": "19.0.10",
+    "@types/react-dom": "19.0.4",
+    "eslint": "^9.22.0",
+    "typescript": "5.8.2",
+    "vercel": "33.2.0"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "cli": {
+    "version": ">= 7.6.2",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "base": {
+      "autoIncrement": true,
+      "credentialsSource": "remote",
+      "distribution": "store",
+      "android": {
+        "buildType": "app-bundle"
+      }
+    },
+    "preview": {
+      "extends": "base",
+      "environment": "preview",
+      "env": {
+        "ENVIRONMENT": "preview"
+      },
+      "channel": "preview"
+    },
+    "production": {
+      "extends": "base",
+      "environment": "production",
+      "env": {
+        "ENVIRONMENT": "production"
+      },
+      "channel": "production"
+    }
+  },
+  "submit": {
+    "preview": {
+      "android": {
+        "track": "internal",
+        "changesNotSentForReview": true,
+        "releaseStatus": "draft"
+      }
+    },
+    "production": {
+      "android": {
+        "track": "production"
+      }
+    }
+  }
+}
