@@ -1,5 +1,11 @@
 # docs
 
+## 0.1.7
+
+### Patch Changes
+
+- 35dc6ed: Only version change
+
 ## 0.1.6
 
 ### Patch Changes
