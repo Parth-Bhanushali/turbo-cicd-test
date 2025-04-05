@@ -41,7 +41,6 @@ jobs:
         id: changeset
         # 1. We need the 'output' of a turbo dry-run to get a json with all affected packages of these run.
         # 2. The multi line json string is wrapped in EOF delimeters to make the GHA happy: https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
-        # 3. We specify the .github/ folder as a dependency here. Just to be safe, if workflows changed, we use that to mean everything has changes pending... to force redeploys
         run: |
           echo 'result<<CHANGESET_DELIMITER' >> $GITHUB_OUTPUT
           echo "$(npx -y turbo build --dry-run=json --filter=...[$TURBO_REF_FILTER])" >> $GITHUB_OUTPUT

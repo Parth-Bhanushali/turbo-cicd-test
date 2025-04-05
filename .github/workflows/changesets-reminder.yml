@@ -1,0 +1,29 @@
+name: Changelog Reminder
+
+on:
+  pull_request:
+    branches: 
+      - main
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      ['packages/**/*', 'apps/**/*', '!*.test.*', '!*.md']
+
+permissions: 
+  contents: read
+  pull-requests: write
+
+jobs:
+  remind:
+    name: Changeset Reminder
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mskelton/changelog-reminder-action@v2
+        with:
+          changelogRegex: "\\.changeset"
+          # NOTE: track issue here {@link https://github.com/mskelton/changelog-reminder-action/issues/19} 
+          message: |
+            We detected some changes in `packages/**/*` or `apps/**/*`, and there are no updates in the `.changeset`.
+            If the changes are user-facing and should cause a version bump, run `pnpm run changeset` to track your changes and include them in the next release CHANGELOG.
+            If you are making simple updates that do not need a version change, you do not need to add a changeset.
