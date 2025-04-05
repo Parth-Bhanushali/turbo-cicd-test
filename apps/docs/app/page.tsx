@@ -2,7 +2,7 @@ import Image, { type ImageProps } from 'next/image';
 import { Button } from '@repo/ui/button';
 import styles from './page.module.css';
 
-console.log('Docs 11');
+console.log('Docs 13');
 
 type Props = Omit<ImageProps, 'src'> & {
   srcLight: string;
