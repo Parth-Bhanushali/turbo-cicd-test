@@ -22,6 +22,7 @@ jobs:
       - uses: mskelton/changelog-reminder-action@v2
         with:
           changelogRegex: "\\.changeset"
+          # NOTE: track issue here {@link https://github.com/mskelton/changelog-reminder-action/issues/19} 
           message: |
             We detected some changes in `packages/**/*` or `apps/**/*`, and there are no updates in the `.changeset`.
             If the changes are user-facing and should cause a version bump, run `pnpm run changeset` to track your changes and include them in the next release CHANGELOG.
