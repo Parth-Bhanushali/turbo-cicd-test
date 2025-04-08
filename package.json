@@ -21,6 +21,12 @@
     "turbo": "^2.4.4",
     "typescript": "5.8.2"
   },
+  "lint-staged": {
+    "*": [
+      "pnpm run lint --force --",
+      "pnpm run format --force --"
+    ]
+  },
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18"

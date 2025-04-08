@@ -1,4 +1,2 @@
-pnpm lint --force
-pnpm format --force
-git add ./
+npx lint-staged --verbose
 exit 1
