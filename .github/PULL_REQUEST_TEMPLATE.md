@@ -47,6 +47,3 @@ Fixes #0000 <!-- link to issue if one exists -->
 - [ ] I've considered possible cross-platform impacts
 - [ ] I've added a [changeset](https://github.com/parth-bhanushali/turbo-cicd-test/blob/main/CONTRIBUTING.md#changesets) if this PR contains user-facing or noteworthy changes
 
-<!--
- THANK YOU for your pull request! Members from the Hydrogen team will review these changes and provide feedback as soon as they are available.
--->
