@@ -1,1 +1,4 @@
-echo "hello world!"
+pnpm lint --force
+pnpm format --force
+git add ./
+exit 1
