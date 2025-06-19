@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 3000",
-    "build": "vercel build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint . --fix",
     "lint:check": "next lint . --max-warnings 0",
