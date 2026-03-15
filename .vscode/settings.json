@@ -3,5 +3,6 @@
     {
       "mode": "auto"
     }
-  ]
+  ],
+  "github.copilot.chat.models": ["claude-sonnet-4-6"]
 }
